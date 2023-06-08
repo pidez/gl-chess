@@ -1,3 +1,7 @@
+
+/* Contiene le informazioni su una mesh, ovvero i dati grezzi, il materiale e la trasformazione di modello
+    In questo modo è facile risalire alle informazioni rilevanti quando si vuole effettuare il rendering della mesh */
+
 #ifndef MESH_H
 #define MESH_H
 
@@ -38,10 +42,15 @@ public:
     bool loadMesh(const std::string& path, unsigned int aiArgs);
     void draw(Program& program);
 
+    void setModelTransform(const glm::mat4& model);
+    const glm::mat4& model() const;
+
 private:
 
     std::vector<Vertex> _vertices;
     std::vector<unsigned int> _indices;
+
+    glm::mat4 _modelTransform;
 
     unsigned int _vao;
     unsigned int _vbo;

@@ -1,6 +1,6 @@
 CC = g++
 
-FLAGS = -DDEBUG
+FLAGS = -DDEBUG -DSCENE_DEBUG
 
 LIBS += -lglut
 LIBS += -lGLEW

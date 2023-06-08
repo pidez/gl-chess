@@ -1,12 +1,15 @@
 #include "Mesh.h"
 
-Mesh::Mesh() {}
+Mesh::Mesh() {
+    _modelTransform = glm::mat4(1.0);
+}
 
 void Mesh::draw(Program& program) {
     
     /* Passaggio delle info sul material al fragment shader */
 
     program.setMaterial(_material);
+    program.setMat4("model", _modelTransform);
 
     /* Rendering effettivo delle primitive */
     glBindVertexArray(_vao);
@@ -124,4 +127,12 @@ bool Mesh::setupMesh(const aiScene* scene, const std::string& path) {
     glBindVertexArray(0);
 
     return true;
+}
+
+void Mesh::setModelTransform(const glm::mat4& model) {
+    _modelTransform = model;
+}
+
+const glm::mat4& Mesh::model() const {
+    return _modelTransform;
 }
