@@ -14,6 +14,11 @@ enum Camera_Movement{
 	RIGHT
 };
 
+enum Camera_Mode {
+	PERSPECTIVE,
+	ORTHOGRAPHIC
+};
+
 class Camera {
 
 public:
@@ -35,6 +40,8 @@ private:
 	glm::vec3 _up;
 	glm::vec3 _right;
 
+	glm::mat4 _projection;
+
 	float _movement_speed; ///< moltiplicatore per traslazioni della camera
 	float _rotation_speed; ///< moltiplicatore per rotazioni della camera
 
@@ -51,6 +58,8 @@ public:
 	///Restituisce la matrice della trasformazione di camera
 	glm::mat4 viewTransform();
 
+	void setPerspective(float FOVdeg, float width, float height, float near, float far);
+
 	void resetPosition();
 
 	///Funzioni che spostano la camera lungo l'asse specificato della quantità x, y o z
@@ -61,6 +70,8 @@ public:
 	const glm::vec3& position() const; 
 	const glm::vec3& vrp() const;
 	const glm::vec3& upDirection() const;
+
+	const glm::mat4& projection() const;
 
 	float& movementSpeed();
 	float& rotationSpeed();

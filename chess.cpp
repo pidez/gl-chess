@@ -31,6 +31,7 @@ void init(int* argc, char** argv);
 void keyboardFunction(unsigned char key, int x, int y);
 void displayFunc();
 void motionFunc(int x, int y);
+void mouseFunc(int button, int state, int x, int y);
 
 int main(int argc, char** argv) {
 	init(&argc, argv);
@@ -87,7 +88,7 @@ void init(int* argc, char** argv) {
 
 	//Initialize window
 	glutInit(argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(800, 600);
 	glutInitWindowPosition(200, 100);
 	window = glutCreateWindow("2DGraphing");
@@ -103,6 +104,7 @@ void init(int* argc, char** argv) {
 	glutKeyboardFunc(keyboardFunction);
 	glutDisplayFunc(displayFunc);
 	glutMotionFunc(motionFunc);
+	glutMouseFunc(mouseFunc);
 
 	//
 
@@ -118,19 +120,11 @@ void displayFunc() {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	std::vector<glm::mat4> models;
-	
-	/* Definisco le matrici di trasformazione per la MVP */
-	glm::mat4 projection = glm::perspective(glm::radians(60.0f), 4.0f/3.0f, 0.1f, 100.0f);
-
-
-
 	/* Imposto gli shader per il rendering della torre
 	PER PASSARE I VALORI AGLI SHADER E' NECESSARIO AVER CHIAMATO glUseProgram(id) */
 	rookProgram->use();
 	
 	/* Trasformazioni */
-	rookProgram->setMat4("projection", projection); //TODO: portare le info sulla trasformazione proiettiva nella classe Camera
 
 	/* Posizione della camera */
 	
@@ -145,7 +139,6 @@ void displayFunc() {
 	sphereProgram->use();
 	
 	/* Trasformazioni */
-	sphereProgram->setMat4("projection", projection);
 	
 	/* Posizione della camera */
 
@@ -156,10 +149,8 @@ void displayFunc() {
 
 	sphereProgram->unbind();
 
-	//scene->enablePicking();
+	scene->enablePicking();
 	scene->draw();
-
-	
 
 	glutSwapBuffers();
 }
@@ -193,5 +184,12 @@ void keyboardFunction(unsigned char key, int x, int y) {
 
 void motionFunc(int x, int y) {
 	scene->camera().mouseInput(x, y);
+	scene->mousePicking(x, y);
 	glutPostRedisplay();
+}
+
+void mouseFunc(int button, int state, int x, int y) {
+	if(button == GLUT_LEFT && state == GLUT_UP) {
+		scene->mousePicking(x, y);
+	}
 }

@@ -41,12 +41,5 @@ void main()
     //Calcolo del colore finale del fragment
     FragColor = vec4(ambientComponent + diffusiveComponent + specularComponent, 1);
 
-    /*
-    if(lightColor.x == 0 && lightColor.y == 0 && lightColor.z == 0)
-        FragColor = vec4(1, 0, 0, 1);
-    else {
-        FragColor = vec4(0, 1, 0, 1);
-    }*/
-
 
 }

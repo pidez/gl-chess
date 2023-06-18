@@ -17,6 +17,9 @@ Camera::Camera() {
 
 	//calcolo e normalizzo gli assi del sistema di riferimento della camera
 	updateAxes();
+
+	//imposto la matrice proiettiva prosoettica di default
+	_projection = glm::perspective(glm::radians(60.0f), 4.0f/3.0f, 0.1f, 100.0f);
 }
 
 Camera::Camera(glm::vec3 cameraPosition, glm::vec3 viewReferencePoint, glm::vec3 upDirection) : 
@@ -37,6 +40,18 @@ void Camera::updateAxes() {
 
 glm::mat4 Camera::viewTransform() {
 	return glm::lookAt(_position, _position + _front, _up);
+}
+
+void Camera::setPerspective(float FOVdeg, float width, float height, float near, float far) {
+	assert(near < far);
+	assert(width > 0);
+	assert(height > 0);
+
+	_projection = glm::perspective(glm::radians(FOVdeg), width/height, near, far);
+}
+
+const glm::mat4& Camera::projection() const {
+	return _projection;
 }
 
 void Camera::resetPosition() {

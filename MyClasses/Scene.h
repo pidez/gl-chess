@@ -4,6 +4,14 @@
     Ad esempio la camera a cui si fa riferimento per il movimento deve essere la camera definita qui. (di conseguenza la
     posizione di camera passata agli shader sarà quella della camera contenuta in questa classe) */
 
+    /* Quando si esegue il rendering:
+    
+        1. le info sul materiale e sulla trasformazioni di modello sono
+            gestite dalla classe Mesh, in particolare nella chiamata a draw(Program)
+        2.  le info riguardo la trasformazione di camera e la trasformazione proiettiva sono
+            gestite dall'oggetto camera membro di questa classe
+        3.  Resta da progettare una classe per gestire le info sulla luce */
+
 #ifndef SCENE_H
 #define SCENE_H
 
@@ -30,8 +38,12 @@ public:
     void enablePicking();
     void disablePicking();
 
+    //Funzione che riceve il punto selezionato dal mouse e gestisce la logica di picking
+    void mousePicking(int x, int y);
+
     /* Disegna tutte le mesh */
     void draw();
+
 
 
     /* Disegna le mesh specificate dal vettore di indici */
@@ -56,6 +68,14 @@ private:
 
     bool _picking_enabled; ///< 
     int _picked_object; ///< ID dell'oggetto attualmente selezionato (Se ne esiste uno, valore negativo altrimenti)
+
+
+    //Vengono aggiornate dopo ogni rendering, per gestire eventuale resize
+    unsigned int _last_x;
+    unsigned int _last_y;
+
+    void drawNoPicking();
+    void drawPicking();
 };
 
 #endif
