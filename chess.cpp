@@ -81,6 +81,37 @@ int main(int argc, char** argv) {
 	scene = new Scene(meshes, programs);
 	scene->setCamera(mainCamera);
 
+		/* Imposto gli shader per il rendering della torre
+	PER PASSARE I VALORI AGLI SHADER E' NECESSARIO AVER CHIAMATO glUseProgram(id) */
+	rookProgram->use();
+	
+	/* Trasformazioni */
+
+	/* Posizione della camera */
+	
+	/* Informazioni sulla luce */
+	rookProgram->setLightColor(glm::vec3(1, 1, 1));
+	rookProgram->setLightIntensity(1);
+	rookProgram->setLightPosition(glm::vec3(0, 0, 1));
+
+	rookProgram->unbind();
+	
+	/* Imposto gli shader per il rendering della sfera */
+	sphereProgram->use();
+	
+	/* Trasformazioni */
+	
+	/* Posizione della camera */
+
+	/* Informazioni sulla luce */
+	sphereProgram->setLightColor(glm::vec3(1, 1, 1));
+	sphereProgram->setLightIntensity(1);
+	sphereProgram->setLightPosition(glm::vec3(0, 0, 1));
+
+	sphereProgram->unbind();
+
+	scene->enablePicking();
+
     glutMainLoop();
 }
 
@@ -118,62 +149,28 @@ void init(int* argc, char** argv) {
 }
 void displayFunc() {
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	/* Imposto gli shader per il rendering della torre
-	PER PASSARE I VALORI AGLI SHADER E' NECESSARIO AVER CHIAMATO glUseProgram(id) */
-	rookProgram->use();
-	
-	/* Trasformazioni */
-
-	/* Posizione della camera */
-	
-	/* Informazioni sulla luce */
-	rookProgram->setLightColor(glm::vec3(1, 1, 1));
-	rookProgram->setLightIntensity(1);
-	rookProgram->setLightPosition(glm::vec3(0, 0, 1));
-
-	rookProgram->unbind();
-	
-	/* Imposto gli shader per il rendering della sfera */
-	sphereProgram->use();
-	
-	/* Trasformazioni */
-	
-	/* Posizione della camera */
-
-	/* Informazioni sulla luce */
-	sphereProgram->setLightColor(glm::vec3(1, 1, 1));
-	sphereProgram->setLightIntensity(1);
-	sphereProgram->setLightPosition(glm::vec3(0, 0, 1));
-
-	sphereProgram->unbind();
-
-	scene->enablePicking();
 	scene->draw();
 
 	glutSwapBuffers();
 }
 
 void keyboardFunction(unsigned char key, int x, int y) {
-	if (key == 'w') {
-		scene->camera().keyboardInput(Camera_Movement::FORWARD, 0.1);
+
+	if(key == 'd') {
+		scene->translateSelected(glm::vec3(0.1f, 0.0f, 0.0f));
 	}
 
 	if(key == 's') {
-		scene->camera().keyboardInput(Camera_Movement::BACK, 0.1);
+		scene->translateSelected(glm::vec3(0.0f, -0.1f, 0.0f));
+	}
+
+	if(key == 'w') {
+		scene->translateSelected(glm::vec3(0.0f, 0.1f, 0.0f));
 	}
 
 	if(key == 'a') {
-		scene->camera().keyboardInput(Camera_Movement::LEFT, 0.1);
-	}
-
-	if(key == 'd') {
-		scene->camera().keyboardInput(Camera_Movement::RIGHT, 0.1);
-	}
-
-	if(key == 'r') {
-		scene->camera().resetPosition();
+		scene->translateSelected(glm::vec3(-0.1f, 0.0f, 0.0f));
 	}
 
 	if(key == 27) {
@@ -184,12 +181,12 @@ void keyboardFunction(unsigned char key, int x, int y) {
 
 void motionFunc(int x, int y) {
 	scene->camera().mouseInput(x, y);
-	scene->mousePicking(x, y);
 	glutPostRedisplay();
 }
 
 void mouseFunc(int button, int state, int x, int y) {
-	if(button == GLUT_LEFT && state == GLUT_UP) {
+	if(button == GLUT_LEFT && state == GLUT_DOWN) {
 		scene->mousePicking(x, y);
+		glutPostRedisplay();
 	}
 }

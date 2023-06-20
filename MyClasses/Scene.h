@@ -38,6 +38,10 @@ public:
     void enablePicking();
     void disablePicking();
 
+    bool pickingEnabled();
+
+
+
     //Funzione che riceve il punto selezionato dal mouse e gestisce la logica di picking
     void mousePicking(int x, int y);
 
@@ -48,6 +52,12 @@ public:
 
     /* Disegna le mesh specificate dal vettore di indici */
     void drawMeshes(std::vector<unsigned int> meshIndices) const;
+
+    void translateSelected(glm::vec3 t);
+    void rotateSelected(glm::vec3 axe, float angle);
+    
+    //generica trasformazione
+    void setSelectionModelTransform(glm::mat4& t);
 
     Camera& camera();
 
@@ -73,6 +83,8 @@ private:
     //Vengono aggiornate dopo ogni rendering, per gestire eventuale resize
     unsigned int _last_x;
     unsigned int _last_y;
+    
+    bool _interacted; // falso finche non avviene la prima interazione con la scnea
 
     void drawNoPicking();
     void drawPicking();

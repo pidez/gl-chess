@@ -61,6 +61,8 @@ public:
 	******************************************************/
 	GLuint id() const;
 
+	GLenum type() const;
+
 
 	/******************************************************
 	* Funzione che ritorna il log dell'ultima compilazione

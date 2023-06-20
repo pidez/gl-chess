@@ -82,6 +82,10 @@ public:
 	void setLightColor(const glm::vec3& color) const;
 
 	void setLightPosition(const glm::vec3& position) const;
+
+	std::vector<Shader> shaders() const {
+		return _shaders;
+	}
 };
 
 #endif

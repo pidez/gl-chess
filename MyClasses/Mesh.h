@@ -40,7 +40,12 @@ public:
 
     //Carica una singola mesh da file.
     bool loadMesh(const std::string& path, unsigned int aiArgs);
+
     void draw(Program& program);
+
+    //Funzione da chiamare per disegnare in modo personalizzato la mesh 
+    //Quando è selezionata
+    void drawSelected(Program& program);
 
     void setModelTransform(const glm::mat4& model);
     const glm::mat4& model() const;

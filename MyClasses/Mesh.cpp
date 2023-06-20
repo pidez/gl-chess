@@ -17,6 +17,15 @@ void Mesh::draw(Program& program) {
     glBindVertexArray(0);
 }
 
+void Mesh::drawSelected(Program& program) {
+    program.setMat4("model", _modelTransform);
+
+    /* Rendering effettivo delle primitive */
+    glBindVertexArray(_vao);
+    glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+}
+
 bool Mesh::loadMesh(const std::string& path, unsigned int aiArgs) {
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(path.c_str(), aiArgs);

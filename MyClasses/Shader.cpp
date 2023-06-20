@@ -83,5 +83,9 @@
 		return _compilation_log;
 	}
 
+	GLenum Shader::type() const {
+		return _type;
+	}
+
 
 
