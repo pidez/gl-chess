@@ -48,11 +48,6 @@ public:
     /* Disegna tutte le mesh */
     void draw();
 
-
-
-    /* Disegna le mesh specificate dal vettore di indici */
-    void drawMeshes(std::vector<unsigned int> meshIndices) const;
-
     void translateSelected(glm::vec3 t);
     void rotateSelected(glm::vec3 axe, float angle);
     
@@ -83,8 +78,6 @@ private:
     //Vengono aggiornate dopo ogni rendering, per gestire eventuale resize
     unsigned int _last_x;
     unsigned int _last_y;
-    
-    bool _interacted; // falso finche non avviene la prima interazione con la scnea
 
     void drawNoPicking();
     void drawPicking();

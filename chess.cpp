@@ -63,12 +63,12 @@ int main(int argc, char** argv) {
 	rook = new Mesh();
 	sphere = new Mesh();
 
-	sphere->loadMesh("models/Sphere.obj", aiProcess_Triangulate);
-	rook->loadMesh("models/rook/rook.obj", aiProcess_Triangulate);
+	sphere->loadMesh("models/flower/flower.obj", aiProcess_Triangulate | aiProcess_FlipUVs);
+	rook->loadMesh("models/rook/rook.obj", aiProcess_Triangulate | aiProcess_FlipUVs);
 	rook->setModelTransform(glm::translate(glm::scale(glm::mat4(1.0), glm::vec3(10, 10, 10)), glm::vec3(0.2, -0.2, 0)));
-	sphere->setModelTransform(glm::scale(glm::mat4(1.0), glm::vec3(0.5, 0.5, 0.5)));
+	sphere->setModelTransform(glm::rotate(glm::scale(glm::mat4(1.0), glm::vec3(0.2, 0.2, 0.2)), -45.0f, glm::vec3(1, 0, 0)));
 	
-	/* Inizializzazione della scens */
+	/* Inizializzazione della scena */
 
 	std::vector<Mesh> meshes;
 	meshes.push_back(*rook);
@@ -148,10 +148,7 @@ void init(int* argc, char** argv) {
   	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 void displayFunc() {
-
-
 	scene->draw();
-
 	glutSwapBuffers();
 }
 

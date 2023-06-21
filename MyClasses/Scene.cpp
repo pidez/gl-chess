@@ -1,8 +1,5 @@
 #include "Scene.h"
-
 #include "GL/freeglut.h"
-
-#include <fstream>
 
 Scene::Scene() {
     #ifdef SCENE_DEBUG
@@ -21,7 +18,6 @@ Scene::Scene(std::vector<Mesh>& meshes, std::vector<Program>& programs) {
 void Scene::setCamera(const Camera& camera) {
     _camera = camera;
  }
-
 
  Camera& Scene::camera(){
     return _camera;
@@ -69,7 +65,6 @@ void Scene::translateSelected(glm::vec3 t) {
         _meshes.at(_picked_object).setModelTransform(glm::translate(currentModel, t));
     }
 }
-
 
 void Scene::draw() {
 
@@ -126,7 +121,7 @@ void Scene::draw() {
             _programs.at(i).unbind();
             
             #ifdef SCENE_DEBUG
-            std::cout << "Scene: Drawing mesh #" << i << std::endl;
+            std::cout << "Scene: Drawing mesh #" << i << " with program " << i << std::endl;
             #endif
         }
     }
@@ -153,8 +148,6 @@ void Scene::drawPicking() {
     pickingProgram.addShader(pickingFragShader);
     pickingProgram.link();
     
-
-
     /* Primo giro di rendering: colore univoco per ogni oggetto */
     for (unsigned int i = 0; i < _meshes.size(); ++i) {
         /* Ottengo il colore univoco di ogni mesh tramite un'operazione bitwise fra l'indice della mesh
@@ -193,13 +186,11 @@ void Scene::drawPicking() {
         std::cout << "color at " << _last_x << " " <<  _last_y << ": " << r << " " << g << " " << b << std::endl;
         #endif
 
-
         //converto il colore all'id corrispondente
         if (r == 255 && g == 255 && b == 255)
             _picked_object = -1; //Ho clickato lo sfondo
 
         else {
-
             //ogni canale colore sta in 8 bit. 0->8 8->16 16->24
             int pickedID = r + g * 256 + b * 256 * 256; 
 

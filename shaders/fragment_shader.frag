@@ -2,6 +2,7 @@
 
 in vec3 fragPosition;
 in vec3 fragNormal;
+in vec2 fragTexCoords;
 
 out vec4 FragColor;
 
@@ -15,6 +16,8 @@ uniform vec3 materialAmbient;
 uniform vec3 materialDiffuse;
 uniform vec3 materialSpecular;
 uniform float shininess;
+
+uniform sampler2D texture_diffuse;
 
 void main()
 {
@@ -40,6 +43,8 @@ void main()
 	}
     //Calcolo del colore finale del fragment
     FragColor = vec4(ambientComponent + diffusiveComponent + specularComponent, 1);
+    //FragColor = texture(texture_diffuse, fragTexCoords);
+
 
 
 }
