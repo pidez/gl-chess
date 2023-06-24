@@ -67,6 +67,9 @@ public:
 	void moveY(float y);
 	void moveZ(float z);
 
+	void rotateX(float x);
+	void rotateY(float y);
+
 	const glm::vec3& position() const; 
 	const glm::vec3& vrp() const;
 	const glm::vec3& upDirection() const;

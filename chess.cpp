@@ -17,11 +17,9 @@
 GLuint window;
 Camera mainCamera;
 
-Program* rookProgram;
-Program* sphereProgram;
+Program* mainProgram;
+Program* pieceProgram;
 
-Mesh* rook;
-Mesh* sphere;
 
 Scene *scene;
 
@@ -38,77 +36,104 @@ int main(int argc, char** argv) {
 
 	/* Inizializzazione dei programmi di shading */
 
-	rookProgram = new Program();
-	sphereProgram = new Program();
+	mainProgram = new Program();
+	pieceProgram = new Program();
 
-	Shader rookVertexShader(GL_VERTEX_SHADER);
-	Shader rookFragmentShader(GL_FRAGMENT_SHADER);
 	Shader sphereVertexShader(GL_VERTEX_SHADER);
 	Shader sphereFragmentShader(GL_FRAGMENT_SHADER);
+	Shader pieceVertexShader(GL_VERTEX_SHADER);
+	Shader pieceFragmentShader(GL_FRAGMENT_SHADER);
 
-	rookVertexShader.compile("shaders/vertex_shader.vert");
-	rookFragmentShader.compile("shaders/fragment_shader.frag");
-	sphereVertexShader.compile("shaders/sphere_vert.vert");
-	sphereFragmentShader.compile("shaders/sphere_frag.frag");
+	sphereVertexShader.compile("shaders/square.vert");
+	sphereFragmentShader.compile("shaders/square.frag");
+	pieceVertexShader.compile("shaders/vertex_shader.vert");
+	pieceFragmentShader.compile("shaders/fragment_shader.frag");
 
-	rookProgram->addShader(rookVertexShader);
-	rookProgram->addShader(rookFragmentShader);
-	sphereProgram->addShader(sphereVertexShader);
-	sphereProgram->addShader(sphereFragmentShader);
 
-	sphereProgram->link();
-	rookProgram->link();
+	mainProgram->addShader(sphereVertexShader);
+	mainProgram->addShader(sphereFragmentShader);
+	pieceProgram->addShader(pieceVertexShader);
+	pieceProgram->addShader(pieceFragmentShader);
+
+	mainProgram->link();
+	pieceProgram->link();
+
+	std::vector<Program> programs;
+	programs.push_back(*mainProgram);
+	programs.push_back(*pieceProgram);
 
 	/* Inizializzazione delle mesh */
-	rook = new Mesh();
-	sphere = new Mesh();
 
-	sphere->loadMesh("models/flower/flower.obj", aiProcess_Triangulate | aiProcess_FlipUVs);
-	rook->loadMesh("models/rook/rook.obj", aiProcess_Triangulate | aiProcess_FlipUVs);
-	rook->setModelTransform(glm::translate(glm::scale(glm::mat4(1.0), glm::vec3(10, 10, 10)), glm::vec3(0.2, -0.2, 0)));
-	sphere->setModelTransform(glm::rotate(glm::scale(glm::mat4(1.0), glm::vec3(0.2, 0.2, 0.2)), -45.0f, glm::vec3(1, 0, 0)));
-	
+	Mesh light, dark, board;
+	light.loadMesh("models/board/light_square.obj", aiProcess_FlipUVs);
+	dark.loadMesh("models/board/dark_square.obj", aiProcess_FlipUVs);
+	board.loadMesh("models/board/board.obj", aiProcess_FlipUVs);
+
+	dark.setProgramIndex(0);
+	light.setProgramIndex(0);
+	board.setProgramIndex(0);
+
+	board.setModelTransform(glm::rotate(glm::mat4(1.0), (float)glm::radians(90.0), glm::vec3(1, 0, 0)));
+
+
+
 	/* Inizializzazione della scena */
 
 	std::vector<Mesh> meshes;
-	meshes.push_back(*rook);
-	meshes.push_back(*sphere);
 
-	std::vector<Program> programs;
-	programs.push_back(*rookProgram);
-	programs.push_back(*sphereProgram);
+	for(int i = 0; i < 8; ++i) {
+		for(int j = 0; j < 8; ++j) {
+			if ((i + j) % 2 == 0) {
+				light.setModelTransform(glm::rotate(glm::translate(glm::mat4(1.0), glm::vec3(i * -0.058, 0, j * -0.058)),
+				 (float)glm::radians(90.0), glm::vec3(1, 0, 0)));
+				meshes.push_back(light);
+			}
+			else {
+				dark.setModelTransform(glm::rotate(glm::translate(glm::mat4(1.0), glm::vec3(i * -0.058, 0, j * -0.058)),
+				 (float)glm::radians(90.0), glm::vec3(1, 0, 0)));
+				meshes.push_back(dark);
+			}
+		}
+	}
+
+
+	//Dopo gli squares c'e il corpo della scacchiera
+	meshes.push_back(board);
+
+	//Dopo la scacchiera i pezzi
+	Mesh whiteRook;
+	whiteRook.loadMesh("models/rook/rook.obj", aiProcess_Triangulate);
+	whiteRook.setProgramIndex(1);
+
+	meshes.push_back(whiteRook);
+
+
+
 
 	scene = new Scene(meshes, programs);
+
+	mainCamera.rotateX(-45);
+
 	scene->setCamera(mainCamera);
 
 		/* Imposto gli shader per il rendering della torre
 	PER PASSARE I VALORI AGLI SHADER E' NECESSARIO AVER CHIAMATO glUseProgram(id) */
-	rookProgram->use();
 	
-	/* Trasformazioni */
-
-	/* Posizione della camera */
-	
-	/* Informazioni sulla luce */
-	rookProgram->setLightColor(glm::vec3(1, 1, 1));
-	rookProgram->setLightIntensity(1);
-	rookProgram->setLightPosition(glm::vec3(0, 0, 1));
-
-	rookProgram->unbind();
-	
-	/* Imposto gli shader per il rendering della sfera */
-	sphereProgram->use();
-	
-	/* Trasformazioni */
-	
-	/* Posizione della camera */
+	mainProgram->use();
 
 	/* Informazioni sulla luce */
-	sphereProgram->setLightColor(glm::vec3(1, 1, 1));
-	sphereProgram->setLightIntensity(1);
-	sphereProgram->setLightPosition(glm::vec3(0, 0, 1));
+	mainProgram->setLightColor(glm::vec3(1, 1, 1));
+	mainProgram->setLightIntensity(1);
+	mainProgram->setLightPosition(glm::vec3(3, 3, 1));
 
-	sphereProgram->unbind();
+	mainProgram->unbind();
+
+	pieceProgram->use();
+	pieceProgram->setLightColor(glm::vec3(1, 1, 1));
+	pieceProgram->setLightIntensity(1);
+	pieceProgram->setLightPosition(glm::vec3(3, 3, 1));
+	pieceProgram->unbind();
+
 
 	scene->enablePicking();
 
@@ -119,8 +144,9 @@ void init(int* argc, char** argv) {
 
 	//Initialize window
 	glutInit(argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-	glutInitWindowSize(800, 600);
+	glutSetOption(GLUT_MULTISAMPLE, 4);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GLUT_MULTISAMPLE);
+	glutInitWindowSize(1200, 900);
 	glutInitWindowPosition(200, 100);
 	window = glutCreateWindow("2DGraphing");
 
@@ -155,19 +181,19 @@ void displayFunc() {
 void keyboardFunction(unsigned char key, int x, int y) {
 
 	if(key == 'd') {
-		scene->translateSelected(glm::vec3(0.1f, 0.0f, 0.0f));
+		scene->rotateScene(glm::vec3(0, 0, 1), -1.57f);
 	}
 
 	if(key == 's') {
-		scene->translateSelected(glm::vec3(0.0f, -0.1f, 0.0f));
+		scene->rotateScene(glm::vec3(1, 0, 0), 1.57f);
 	}
 
 	if(key == 'w') {
-		scene->translateSelected(glm::vec3(0.0f, 0.1f, 0.0f));
+		scene->rotateScene(glm::vec3(1, 0, 0), -1.57f);
 	}
 
 	if(key == 'a') {
-		scene->translateSelected(glm::vec3(-0.1f, 0.0f, 0.0f));
+		scene->rotateScene(glm::vec3(0, 0, 1), 1.57f);
 	}
 
 	if(key == 27) {
@@ -177,13 +203,18 @@ void keyboardFunction(unsigned char key, int x, int y) {
 }
 
 void motionFunc(int x, int y) {
-	scene->camera().mouseInput(x, y);
+	scene->followCursor(x, y);
 	glutPostRedisplay();
 }
 
 void mouseFunc(int button, int state, int x, int y) {
 	if(button == GLUT_LEFT && state == GLUT_DOWN) {
 		scene->mousePicking(x, y);
+		glutPostRedisplay();
+	}
+
+	if(state == GLUT_UP) {
+		scene->unselect();
 		glutPostRedisplay();
 	}
 }

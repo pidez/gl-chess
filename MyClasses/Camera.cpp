@@ -1,7 +1,7 @@
 #include "Camera.h"
 
 Camera::Camera() {
-	_position = glm::vec3(0, 0, 4);
+	_position = glm::vec3(0, 0.3, 0.5);
 	_vrp = glm::vec3(0, 0, 0);
 	_upDirection = glm::vec3(0, 1, 0);
 
@@ -114,10 +114,10 @@ void Camera::mouseInput(int x, int y) {
 	_yaw += xoffset;
 	_pitch += yoffset;
 
-	if(_pitch > 89.0)
-		_pitch = 89.0;
-	if(_pitch < -89.0)
-		_pitch = -89.0;
+	if(_pitch > 90.0)
+		_pitch = 90.0;
+	if(_pitch < -90.0)
+		_pitch = -90.0;
 
 	updateAxes();
 }
@@ -140,4 +140,14 @@ float& Camera::movementSpeed() {
 
 float& Camera::rotationSpeed() {
 	return _rotation_speed;
+}
+
+void Camera::rotateX(float x) {
+	_pitch+=x;
+	updateAxes();
+}
+
+void Camera::rotateY(float y) {
+	_yaw += y;
+	updateAxes();
 }

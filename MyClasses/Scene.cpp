@@ -43,6 +43,8 @@ void Scene::mousePicking(int x, int y) {
 
         #ifdef SCENE_DEBUG
         std::cout <<  "reading color at " << x << " " << y << std::endl;
+        std::cout << "setting last x: " << x << std::endl;
+        std::cout << "setting last y: " << y << std::endl;
         #endif
 
         _last_x = x;
@@ -52,18 +54,55 @@ void Scene::mousePicking(int x, int y) {
     }
 }
 
+void Scene::followCursor(int x, int y) {
+
+    #ifdef SCENE_DEBUG
+    std::cout << "moving from " << _last_x << " " << _last_y << " to " << x << " " << y << std::endl;
+
+    #endif
+    int dx = (x - _last_x);
+    int dy = -(y - _last_y);
+
+    float sx = dx * (0.5/(float)glutGet(GLUT_WINDOW_WIDTH));
+    float sy = dy * (0.5/(float)glutGet(GLUT_WINDOW_HEIGHT));
+    glm::vec3 t(sx, sy, 0);
+    translateSelected(t);
+    _last_x = x;
+    _last_y = y;
+}
+
 void Scene::rotateSelected(glm::vec3 axe, float angle) {
     if(_picking_enabled && _picked_object != -1) {
         //generate and set transform
+        glm::mat4 currentModel = _meshes.at(_picked_object).model();
+        _meshes.at(_picked_object).setModelTransform(glm::rotate(currentModel, angle, axe));
     }
 }
 
 void Scene::translateSelected(glm::vec3 t) {
     if(_picking_enabled && _picked_object >= 0) {
-        std::cout << "ciso";
         glm::mat4 currentModel = _meshes.at(_picked_object).model();
         _meshes.at(_picked_object).setModelTransform(glm::translate(currentModel, t));
     }
+}
+
+void Scene::rotateScene(glm::vec3 axe, float angle) {
+    //Ruoto tutte le mesh della scena
+    for(unsigned int i = 0; i < _meshes.size(); ++i) {
+        glm::mat4 currentModel = _meshes.at(i).model();
+        _meshes.at(i).setModelTransform(glm::rotate(currentModel, angle, axe));
+    }
+}
+
+void Scene::translateScene(glm::vec3 t) {
+    for(unsigned int i = 0; i < _meshes.size(); ++i) {
+        glm::mat4 currentModel = _meshes.at(i).model();
+        _meshes.at(i).setModelTransform(glm::translate(currentModel, t));
+    }
+}
+
+void Scene::unselect() {
+    _picked_object = -1;
 }
 
 void Scene::draw() {
@@ -72,7 +111,7 @@ void Scene::draw() {
     std::cout << "### DRAWING SCENE ###" << std::endl;
     #endif
     
-    glClearColor(0, 0, 0, 1);
+    glClearColor(1, 1, 1, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
 
@@ -81,6 +120,8 @@ void Scene::draw() {
 
         if(i == _picked_object) {
 
+            int p = _meshes.at(i).getProgramIndex();
+
             //Utilizzo uno shading program adeguato per l'oggetto selezionato
             Shader fragmentShader(GL_FRAGMENT_SHADER);
             fragmentShader.compile("shaders/selected_frag.frag");
@@ -88,7 +129,7 @@ void Scene::draw() {
             Program program;
 
             program.addShader(fragmentShader);
-            for(Shader s : _programs.at(i).shaders()) {
+            for(Shader s : _programs.at(p).shaders()) {
                 if (s.type() == GL_VERTEX_SHADER) {
                     program.addShader(s);
                 }
@@ -97,31 +138,33 @@ void Scene::draw() {
             program.link();
 
             program.use();
-            _programs.at(i).setMat4("view", _camera.viewTransform());
-            _programs.at(i).setMat4("projection", _camera.projection());
+
+            _programs.at(p).setMat4("view", _camera.viewTransform());
+            _programs.at(p).setMat4("projection", _camera.projection());
 
             _meshes.at(i).drawSelected(program);
 
             program.unbind();
             
             #ifdef SCENE_DEBUG
-            std::cout << "Scene: Drawing mesh #" << i << "(selected)" <<  std::endl;
+            std::cout << "Scene: Drawing mesh #" << i << "(selected)" <<  "with program " << p << std::endl;
             #endif
         }
 
         //Altrimenti non ci sono oggetti selezionati e disgeno tutto normalmente
         else {
-            _programs.at(i).use();
+            int p = _meshes.at(i).getProgramIndex();
+            _programs.at(p).use();
 
-            _programs.at(i).setMat4("view", _camera.viewTransform());
-            _programs.at(i).setMat4("projection", _camera.projection());
+            _programs.at(p).setMat4("view", _camera.viewTransform());
+            _programs.at(p).setMat4("projection", _camera.projection());
 
-            _meshes[i].draw(_programs[i]);
+            _meshes[i].draw(_programs[p]);
             
-            _programs.at(i).unbind();
+            _programs.at(p).unbind();
             
             #ifdef SCENE_DEBUG
-            std::cout << "Scene: Drawing mesh #" << i << " with program " << i << std::endl;
+            std::cout << "Scene: Drawing mesh #" << i << " with program " << p << std::endl;
             #endif
         }
     }
@@ -195,7 +238,13 @@ void Scene::drawPicking() {
             int pickedID = r + g * 256 + b * 256 * 256; 
 
             //ottengo la mesh su cui è avvenuto il click
-            _picked_object = pickedID;
+            //gli oggetti da 0 a 64 sono la scacchiera ed i tasselli: non si possono muovere singolarmente
+            if(pickedID > 64){
+                _picked_object = pickedID;
+            }
+            else {
+                _picked_object = -1;
+            }
         }
         #ifdef SCENE_DEBUG
         std::cout << "Clicked on mesh #" << _picked_object << std::endl;

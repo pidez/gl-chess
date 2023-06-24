@@ -53,6 +53,9 @@ public:
     void setModelTransform(const glm::mat4& model);
     const glm::mat4& model() const;
 
+    void setProgramIndex(unsigned int index);
+    int getProgramIndex();
+
 private:
 
     std::vector<Vertex> _vertices;
@@ -67,6 +70,8 @@ private:
     Material _material;
 
     GLuint _texture;
+
+    unsigned int _programIndex;
 
 
 

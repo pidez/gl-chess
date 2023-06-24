@@ -5,7 +5,9 @@
 
 Mesh::Mesh() {
     _modelTransform = glm::mat4(1.0);
+    _programIndex = 0;
 }
+
 
 void Mesh::draw(Program& program) {
     
@@ -193,4 +195,13 @@ void Mesh::setModelTransform(const glm::mat4& model) {
 
 const glm::mat4& Mesh::model() const {
     return _modelTransform;
+}
+
+void Mesh::setProgramIndex(unsigned int index) {
+    if(index > 0)
+        _programIndex = index;
+}
+
+int Mesh::getProgramIndex() {
+    return _programIndex;
 }

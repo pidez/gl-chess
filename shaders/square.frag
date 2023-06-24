@@ -42,11 +42,14 @@ void main()
 		specularComponent = materialSpecular * (lightColor * lightIntensity) * pow(cosAlpha, shininess);
 	}
     //Calcolo del colore finale del fragment
-    //FragColor = vec4(ambientComponent + diffusiveComponent, 1);
+    //FragColor = vec4(ambientComponent + diffusiveComponent + specularComponent, 1);
     //FragColor = vec4(1, 1, 0, 1);
 
-    FragColor = texture(texture_diffuse, fragTexCoords);
-
+    vec4 lightColor = vec4(ambientComponent + diffusiveComponent + specularComponent, 1);
+    vec4 textureColor = texture(texture_diffuse, fragTexCoords);
+    //FragColor = vec4(mix(texture(texture_diffuse, fragTexCoords).rgb, lightColor.rgb, 1), 0.5);
+    FragColor = vec4(textureColor.xyz, 1);
+    //FragColor = lightColor;
 
 
 }

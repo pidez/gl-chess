@@ -44,15 +44,25 @@ public:
 
     //Funzione che riceve il punto selezionato dal mouse e gestisce la logica di picking
     void mousePicking(int x, int y);
+    
+    //Funzione che trasla l'oggetto selezionato alla posizione del puntatore
+    void followCursor(int x, int y);
+
 
     /* Disegna tutte le mesh */
     void draw();
 
     void translateSelected(glm::vec3 t);
     void rotateSelected(glm::vec3 axe, float angle);
+
+    void rotateScene(glm::vec3 axe, float angle);
+    void translateScene(glm::vec3 t);
     
     //generica trasformazione
     void setSelectionModelTransform(glm::mat4& t);
+
+    //Se c'è un oggetto selezionato lo deseleziona
+    void unselect();
 
     Camera& camera();
 
