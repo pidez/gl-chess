@@ -1,6 +1,6 @@
-# ignore models folder
-/models
-
 # ignore executables and object files
 *.exe
 *.o
+
+#github token
+token.txt
