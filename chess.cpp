@@ -38,7 +38,7 @@ int main(int argc, char** argv) {
 
 	initModels();
 
-	mainCamera.rotateX(-10);
+	mainCamera.rotateX(-35);
 
 	scene->setCamera(mainCamera);
 	
