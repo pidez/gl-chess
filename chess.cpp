@@ -38,7 +38,7 @@ int main(int argc, char** argv) {
 
 	initModels();
 
-	mainCamera.rotateX(-45);
+	mainCamera.rotateX(-10);
 
 	scene->setCamera(mainCamera);
 	
@@ -338,15 +338,15 @@ void initModels() {
 	b1.setProgramIndex(1);
 	meshes.push_back(b1);
 
-	b2.loadMesh("models/modelli_corretti/clock_button_left", 0);
+	b2.loadMesh("models/modelli_corretti/clock_button_left.obj", 0);
 	b2.setProgramIndex(1);
 	meshes.push_back(b2);
 
-	b3.loadMesh("models/modelli_corretti/clock_button_right", 0);
+	b3.loadMesh("models/modelli_corretti/clock_button_right.obj", 0);
 	b3.setProgramIndex(1);
 	meshes.push_back(b3);
 
-	b4.loadMesh("models/modelli_corretti/clock_button_center", 0);
+	b4.loadMesh("models/modelli_corretti/clock_button_center.obj", 0);
 	b4.setProgramIndex(1);
 	meshes.push_back(b4);
 
