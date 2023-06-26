@@ -61,11 +61,11 @@ void Scene::followCursor(int x, int y) {
 
     #endif
     int dx = (x - _last_x);
-    int dy = -(y - _last_y);
+    int dy = (y - _last_y);
 
     float sx = dx * (0.5/(float)glutGet(GLUT_WINDOW_WIDTH));
     float sy = dy * (0.5/(float)glutGet(GLUT_WINDOW_HEIGHT));
-    glm::vec3 t(sx, sy, 0);
+    glm::vec3 t(sx, 0, sy);
     translateSelected(t);
     _last_x = x;
     _last_y = y;
@@ -119,6 +119,8 @@ void Scene::draw() {
     for(unsigned int i = 0; i < _meshes.size(); ++i) {
 
         if(i == _picked_object) {
+
+            std::cout << "i: " << i;
 
             int p = _meshes.at(i).getProgramIndex();
 
@@ -239,7 +241,7 @@ void Scene::drawPicking() {
 
             //ottengo la mesh su cui è avvenuto il click
             //gli oggetti da 0 a 64 sono la scacchiera ed i tasselli: non si possono muovere singolarmente
-            if(pickedID > 64){
+            if(pickedID > 64 && pickedID < 97) {
                 _picked_object = pickedID;
             }
             else {

@@ -1,0 +1,26 @@
+# Blender MTL File: 'None'
+# Material Count: 2
+
+newmtl whitePiece
+Ka 0.1 0.1 0.1
+Kd 0.800000 0.755470 0.414815
+Ks 0.500000 0.500000 0.500000
+illum 2
+Ns 489.999983
+
+newmtl blackPiece
+Ka 0.1 0.1 0.1
+Kd 0.1 0.1 0.1
+Ks 0.500000 0.500000 0.500000
+illum 2
+Ns 489.999983
+
+
+
+newmtl shinyred
+Ka  0.1985  0.0000  0.0000
+Kd  0.5921  0.0167  0.0000
+Ks  0.5973  0.2083  0.2083
+illum 2
+Ns 100.2235
+map_Kd diffuse.jpg

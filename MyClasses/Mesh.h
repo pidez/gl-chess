@@ -56,6 +56,7 @@ public:
     void setProgramIndex(unsigned int index);
     int getProgramIndex();
 
+
 private:
 
     std::vector<Vertex> _vertices;
@@ -72,9 +73,6 @@ private:
     GLuint _texture;
 
     unsigned int _programIndex;
-
-
-
 
     //Riempie i vettori _vertices, _indices con i dati della singola mesh letta da file.
     //imposta vao, vbo, ebo con i dati su posizione e normale

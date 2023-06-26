@@ -1,7 +1,7 @@
 #include "Camera.h"
 
 Camera::Camera() {
-	_position = glm::vec3(0, 0.3, 0.5);
+	_position = glm::vec3(0, 0.3, 0.2);
 	_vrp = glm::vec3(0, 0, 0);
 	_upDirection = glm::vec3(0, 1, 0);
 
@@ -75,13 +75,13 @@ void Camera::moveZ(float z) {
 
 void Camera::keyboardInput(Camera_Movement direction, float speed) {
 	if(direction == FORWARD){
-		_position -= _front * speed;
+		_position += _front * speed;
 	}	
 	if(direction == LEFT){
 		_position += _right * speed;
 	}	
 	if(direction == BACK){
-		_position += _front * speed;
+		_position -= _front * speed;
 	}	
 	if(direction == RIGHT){
 		_position -= _right * speed;

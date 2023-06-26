@@ -52,7 +52,7 @@ bool Mesh::loadMesh(const std::string& path, unsigned int aiArgs) {
 
 bool Mesh::setupMesh(const aiScene* scene, const std::string& path) {
 
-    /* Lettura dei dati su posizione e normale dei vertici della mesh */
+    /* Lettura dei dati su posizione, normale e coordinate dei vertici della mesh */
 
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
@@ -81,7 +81,6 @@ bool Mesh::setupMesh(const aiScene* scene, const std::string& path) {
                     glm::vec2(pTexCoord->x, pTexCoord->y));
 
         _vertices.push_back(v);
-        //std::cout << v << std::endl;
     }
 
     for(unsigned int i = 0; i < mesh->mNumFaces;  ++i) {
@@ -130,33 +129,35 @@ bool Mesh::setupMesh(const aiScene* scene, const std::string& path) {
     /*Per questo progetto sto supponendo di avere sempre una sola texture di tipo diffusivo*/
 
     aiString str;
-    material->GetTexture(aiTextureType_DIFFUSE, 0, &str);
+    if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0){
+        material->GetTexture(aiTextureType_DIFFUSE, 0, &str);
 
-    #ifdef DEBUG
-    std::cout << "Texture name: " << str.C_Str() << std::endl;
-    #endif
+        #ifdef DEBUG
+        std::cout << "Texture name: " << str.C_Str() << std::endl;
+        #endif
 
-    int width, height, channels;
+        int width, height, channels;
 
-    /*find working directory*/
+        /*find working directory*/
 
-    std::string dir = path.substr(0, path.find_last_of("/\\") + 1);
-    std::string target = dir.append(str.C_Str());
+        std::string dir = path.substr(0, path.find_last_of("/\\") + 1);
+        std::string target = dir.append(str.C_Str());
 
-    std::cout << "texture path: " << target << std::endl;
+        std::cout << "texture path: " << target << std::endl;
 
-    unsigned char* image = stbi_load(target.c_str(), &width, &height, &channels, 4);
+        unsigned char* image = stbi_load(target.c_str(), &width, &height, &channels, 4);
 
-    if(image == nullptr) 
-        std::cout << "Scene: Caricamento della texture fallito." << std::endl;
+        if(image == nullptr) 
+            std::cout << "Scene: Caricamento della texture fallito." << std::endl;
 
 
-    glGenTextures(1, &_texture);
-    glBindTexture(GL_TEXTURE_2D, _texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-    glGenerateMipmap(GL_TEXTURE_2D); //Altrimenti non funziona piu un cazzo
+        glGenTextures(1, &_texture);
+        glBindTexture(GL_TEXTURE_2D, _texture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+        glGenerateMipmap(GL_TEXTURE_2D); //Altrimenti non funziona piu un cazzo
 
-    stbi_image_free(image);
+        stbi_image_free(image);
+    }
 
     /* Impostazione dello stato openGL */
 

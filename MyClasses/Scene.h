@@ -57,9 +57,6 @@ public:
 
     void rotateScene(glm::vec3 axe, float angle);
     void translateScene(glm::vec3 t);
-    
-    //generica trasformazione
-    void setSelectionModelTransform(glm::mat4& t);
 
     //Se c'è un oggetto selezionato lo deseleziona
     void unselect();
@@ -81,15 +78,14 @@ private:
     /* Array utilizzato solo in caso di attivazione della funzionalità di picking */
     std::vector<glm::vec3> _colors; ///< colori univoci per ogni mesh
 
-    bool _picking_enabled; ///< 
+    bool _picking_enabled;
     int _picked_object; ///< ID dell'oggetto attualmente selezionato (Se ne esiste uno, valore negativo altrimenti)
 
 
-    //Vengono aggiornate dopo ogni rendering, per gestire eventuale resize
+    //Vengono aggiornate dopo ogni rendering, per gestire drag del mouse
     unsigned int _last_x;
     unsigned int _last_y;
 
-    void drawNoPicking();
     void drawPicking();
 };
 
